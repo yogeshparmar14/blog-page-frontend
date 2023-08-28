@@ -6,9 +6,11 @@ import './styles.css'
 const BlogPage = () => {
   const [blogs, setBlogs] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
+  const [commentIndex, setCommentIndex] = useState(null);
   const [editedTitle, setEditedTitle] = useState('');
   const [editedImageUrl, setEditedImageUrl] = useState('');
   const [editedDescription, setEditedDescription] = useState('');
+  const [commentDescription, setCommentDescription] = useState('');
 
   useEffect(() => {
     getAllBlog()
@@ -19,6 +21,11 @@ const BlogPage = () => {
     setEditedTitle(blog.title);
     setEditedImageUrl(blog.imageUrl);
     setEditedDescription(blog.discription);
+  };
+
+  const handleCommentClick = (index) => {
+    setCommentIndex(index);
+  
   };
 
   const handleSaveEdit = async() => {
@@ -51,11 +58,44 @@ const BlogPage = () => {
     }
   };
 
+  const handleSaveComment = async() => {
+    if (commentIndex !== null) {
+      let token = localStorage.getItem('token')
+      const response = await fetch(`https://blog-page-eta.vercel.app/admin/add-comment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept':'application/json',
+          'Origin':'http://localhost:3000',
+          "Access-Control-Allow-Origin": "*",
+          'authorization':`Bearer ${token}`
+        },
+        body: JSON.stringify({
+          blogId:blogs[commentIndex]._id,
+          commentDescription:commentDescription,
+        })
+      })
+      const result = await response.json();
+      if (result.status === 200) {
+        // getAllBlog()
+      }
+      // setOpenPopUp(false)
+      setCommentIndex(null);
+      setCommentDescription('');
+    }
+  };
+
   const handleCloseEdit = () => {
     setEditingIndex(null);
     setEditedTitle('');
     setEditedImageUrl('');
     setEditedDescription('');
+  };
+
+  const handleCloseComment = () => {
+    setCommentIndex(null);
+    setCommentDescription('');
+    
   };
 
   const getAllBlog = () => {
@@ -178,19 +218,32 @@ const BlogPage = () => {
             <Image imageUrl={blog.imageUrl} altText={blog.title} />
             <Title title={blog.title} />
             <Description description={blog.discription} />
+
+            <h1>Comments</h1>
+            {blog?.comments?.map((comment,index)=>{
+               return (<p key={comment._id}>
+                {comment.commentDescription}
+               </p>)
+            })}
             <div className="blog-buttons">
               <button className="like" onClick={() => handleLike(index)}>
                 Like ({blog.like})
               </button>
+              <button className="share" onClick={() => handleCommentClick(index)}>
+               Comment
+              </button>
               <button className="share" onClick={() => handleShare(blog.title, blog.description)}>
                 Share
               </button>
+              {localStorage.getItem('userType')==="ADMIN"?
               <button className="delete" onClick={() => deleteBlog(blog._id)}>
                 Delete
-              </button>
+              </button>:null}
+              {localStorage.getItem('userType')==="ADMIN"?
               <button className="edit" onClick={() => handleEditClick(index)}>
                 Edit
               </button>
+              :null}
             </div>
           </div>
         ))}
@@ -219,6 +272,21 @@ const BlogPage = () => {
             />
             <button onClick={handleSaveEdit}>Save</button>
             <button onClick={handleCloseEdit}>Cancel</button>
+          </div>
+        </div>
+      )}
+      {commentIndex !== null && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Add comment</h2>
+          
+            <textarea
+              value={commentDescription}
+              onChange={(e) => setCommentDescription(e.target.value)}
+              placeholder="Description"
+            />
+            <button onClick={handleSaveComment}>Save</button>
+            <button onClick={handleCloseComment}>Cancel</button>
           </div>
         </div>
       )}

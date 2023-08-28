@@ -32,6 +32,7 @@ const Login = () => {
     console.log("result",result)
     if(result.status==200){
         localStorage.setItem('token',result?.data?.accessToken);
+        localStorage.setItem('userType',result?.data?.data?.userType);
       navigate("/blog-page");}
   };
 
