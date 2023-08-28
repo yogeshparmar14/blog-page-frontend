@@ -77,7 +77,7 @@ const BlogPage = () => {
       })
       const result = await response.json();
       if (result.status === 200) {
-        // getAllBlog()
+         getAllBlog()
       }
       // setOpenPopUp(false)
       setCommentIndex(null);
