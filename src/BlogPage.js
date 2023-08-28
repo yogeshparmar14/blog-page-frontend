@@ -159,9 +159,10 @@ const BlogPage = () => {
   };
 
   const handleLike = async(index) => {
-    const updatedBlogs = [...blogs];
-    updatedBlogs[index].likes += 1;
-    setBlogs(updatedBlogs);
+    // const updatedBlogs = [...blogs];
+    // updatedBlogs[index].likes += 1;
+    // setBlogs(updatedBlogs); 
+    console.log("blogs[index]",blogs[index])
     let token = localStorage.getItem('token')
     const response = await fetch(`https://blog-page-eta.vercel.app/admin/update/${blogs[index]._id}`, {
       method: 'PUT',
@@ -232,7 +233,7 @@ const BlogPage = () => {
               <button className="share" onClick={() => handleCommentClick(index)}>
                Comment
               </button>
-              <button className="share" onClick={() => handleShare(blog.title, blog.description)}>
+              <button className="share" onClick={() => handleShare(blog.title, blog.discription)}>
                 Share
               </button>
               {localStorage.getItem('userType')==="ADMIN"?
