@@ -48,7 +48,7 @@ const Signup = () => {
       </form>
       <div className="signup">
         <span className="signup">Don't have an account? 
-        <Link to="/">Login</Link>
+        <Link to="/login">Login</Link>
         </span>
       </div>
     </div>
